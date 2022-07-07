@@ -1,25 +1,18 @@
-import { Component } from "react"
-import Modal from "components/Modal"
+import PropTypes from 'prop-types'
 
-class ImageGalleryItem extends Component {
-    state = {modalOpen: false}
-
-    toggleModal = () => {
-        this.setState(({modalOpen}) => ({modalOpen: !modalOpen}))
-    }
-
-    render() {
-        const { modalOpen } = this.state
-        const {smallImg, largeImg} = this.props
+const ImageGalleryItem  = ({smallImg, id, onClick}) => {
         return (
-            <li className="ImageGalleryItem" onClick={this.toggleModal}>
+            <li className="ImageGalleryItem" id={id} onClick={onClick} >
                 <img src={smallImg} alt="" className="ImageGalleryItem-image" />
-                {modalOpen && <Modal largeImg={largeImg} onClose={this.toggleModal} />} 
             </li>
             
         )
-    }
 }
-    
+
+ImageGalleryItem.propTypes = {
+    smallImg: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
+    onClick: PropTypes.func.isRequired
+}
 
 export default ImageGalleryItem

@@ -1,5 +1,6 @@
 import { Component } from "react"
 import { createPortal } from "react-dom"
+import PropTypes from 'prop-types'
 
 const modalRoot = document.getElementById('modal-root')
 
@@ -12,12 +13,10 @@ class Modal extends Component {
         this.props.onClose()
     }
     handleCloseOnClick = (event) => {
-        if (event.target === event.currentTarget) {
-            console.log(this.props.onClose);
-            this.props.onClose()
+        if (event.target !== event.currentTarget) {
             return
         }
-        console.log('nono');
+        this.props.onClose()
     } 
     
     componentDidMount() {
@@ -28,15 +27,29 @@ class Modal extends Component {
     }
 
     render() {
-        const {largeImg} = this.props
+        const { handleCloseOnClick } = this
+
+        const currentId = Number(this.props.id)
+        const currentImageUrl = this.props.images.find(image => image.id === currentId).largeImageURL
+        
         return createPortal(
-            <div onClick={this.handleCloseOnClick} className="Overlay">
+            <div onClick={handleCloseOnClick} className="Overlay">
                 <div className="Modal">
-                    <img src={largeImg} alt="" />
+                    <img src={currentImageUrl} alt="" />
                 </div>
             </div>,
             modalRoot
         )
     }
 }
+
+Modal.propTypes = {
+    id: PropTypes.string.isRequired,
+    images: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        largeImageURL: PropTypes.string.isRequired
+    })),
+    onClose: PropTypes.func.isRequired
+}
+
 export default Modal

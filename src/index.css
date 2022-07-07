@@ -41,7 +41,13 @@ ul {
   grid-gap: 16px;
   padding-bottom: 24px;
 }
-
+.container {
+  max-width: 1170px;
+  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
 /*
  * Стили компонента Searchbar
  */
@@ -82,7 +88,7 @@ ul {
   width: 48px;
   height: 48px;
   border: 0;
-  /* background-image: url('https://image.flaticon.com/icons/svg/149/149852.svg'); */
+  background-image: url('https://cdn-icons-png.flaticon.com/512/68/68213.png?w=826&t=st=1657185115~exp=1657185715~hmac=959be667d61fd221e5a68b30239a69471792ba11f3ca0b7ef4bb688e9bdc38a1');
   background-size: 40%;
   background-repeat: no-repeat;
   background-position: center;
@@ -134,10 +140,7 @@ ul {
   grid-gap: 16px;
   margin-top: 0;
   margin-bottom: 0;
-  padding: 20px;
   list-style: none;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /*
@@ -194,11 +197,14 @@ ul {
 */
 .Button {
   padding: 8px 16px;
+  margin-top: 16px;
   border-radius: 2px;
   background-color: #3f51b5;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
   display: inline-block;
+  margin-right: auto;
+  margin-left: auto;
   color: #fff;
   border: 0;
   text-decoration: none;
@@ -216,4 +222,19 @@ ul {
 .Button:hover,
 .Button:focus {
   background-color: #303f9f;
+}
+
+.errorContainer {
+  max-width: 500px;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: rgba(255, 0, 0, 0.808);
+  border-radius: 4px;
+}
+.errorMessage {
+  font-weight: 700;
+  color: floralwhite;
+  font-size: 24px;
+  padding: 20px;
 }

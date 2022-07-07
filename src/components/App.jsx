@@ -2,6 +2,7 @@ import { Component } from "react";
 import ImageGallery from "./ImageGallery";
 import Loader from "./Loader";
 import Searchbar from "./Searchbar";
+import ErrorHandler from "./ErrorHandler";
 import {fetchImages} from '../services/pixabayAPI'
 
 export class App extends Component {
@@ -9,42 +10,55 @@ export class App extends Component {
     query: '',
     page: 1,
     status: 'idle',
-    modalOpen: false,
-    images: null
+    images: [],
+    errorMessage: ''
   }
 
-  componentDidUpdate(_, prevState) {
-    const { query, page } = this.state
+  async componentDidUpdate(_, prevState) {
+    const { query, page, images } = this.state
     
-    if (prevState.query === query) {
+    if (prevState.query === query && prevState.page === page) {
       return
     }
-    this.setState({status: 'pending'})
+    
+    this.setState({ status: 'pending' })
 
-    setTimeout(() => {fetchImages(query, page)
-      .then(data => {
-        if (data.total === 0) {
+    try {
+      const data = await fetchImages(query, page)
+
+      if (data.total === 0) {
           throw new Error('Nothing found to match your query');
-        }
-        this.setState({ status: 'fulfilled', images: data.hits})
-    }).catch(error => {
-      console.log(error.message);
-      this.setState({status: 'rejected'})
-    })}, 1000)
+      }
+      
+      this.setState({
+          status: 'fulfilled',
+          images: query !== prevState.query ? data.hits : [...images, ...data.hits],
+        })
+    } catch (error) {
+      this.setState({status: 'rejected', errorMessage: error.message})
+    }
   }
 
   handleSubmit = (query) => {
-    this.setState({ query })
+    this.setState({ query, page: 1 })
+  }
+
+  onLoadMoreClick = () => {
+    this.setState(({page}) => ({page: page + 1}))
   }
 
   render() {
-      const {status, images } = this.state
+    const { status, images, errorMessage } = this.state
+    const { handleSubmit, onLoadMoreClick } = this
       return (
-      <div>
-        <Searchbar onSubmit={this.handleSubmit} />
-          {status === 'fulfilled' && <ImageGallery images={images} />}
+      <>
+        <Searchbar onSubmit={handleSubmit} />
+        <div className="container">
+          {status === 'fulfilled' && <ImageGallery images={images} onButtonClick={onLoadMoreClick} />}
           {status === 'pending' && <Loader />}
-      </div>
+          {status === 'rejected' && <ErrorHandler message={errorMessage} />}
+        </div>
+      </>
   )
     };
 };
