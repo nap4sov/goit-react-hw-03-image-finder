@@ -28,14 +28,12 @@ class Modal extends Component {
 
     render() {
         const { handleCloseOnClick } = this
-
-        const currentId = Number(this.props.id)
-        const currentImageUrl = this.props.images.find(image => image.id === currentId).largeImageURL
+        const { imageUrl } = this.props
         
         return createPortal(
             <div onClick={handleCloseOnClick} className="Overlay">
                 <div className="Modal">
-                    <img src={currentImageUrl} alt="" />
+                    <img src={imageUrl} alt="" />
                 </div>
             </div>,
             modalRoot
@@ -44,11 +42,7 @@ class Modal extends Component {
 }
 
 Modal.propTypes = {
-    id: PropTypes.string.isRequired,
-    images: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        largeImageURL: PropTypes.string.isRequired
-    })),
+    imageUrl: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired
 }
 

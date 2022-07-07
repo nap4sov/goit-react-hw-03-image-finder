@@ -3,6 +3,7 @@ import ImageGallery from "./ImageGallery";
 import Loader from "./Loader";
 import Searchbar from "./Searchbar";
 import ErrorHandler from "./ErrorHandler";
+import Button from "./Button";
 import {fetchImages} from '../services/pixabayAPI'
 
 export class App extends Component {
@@ -11,6 +12,7 @@ export class App extends Component {
     page: 1,
     status: 'idle',
     images: [],
+    totalImages: 0,
     errorMessage: ''
   }
 
@@ -31,8 +33,9 @@ export class App extends Component {
       }
       
       this.setState({
-          status: 'fulfilled',
-          images: query !== prevState.query ? data.hits : [...images, ...data.hits],
+        status: 'fulfilled',
+        totalImages: data.totalHits,
+        images: query !== prevState.query ? data.hits : [...images, ...data.hits],
         })
     } catch (error) {
       this.setState({status: 'rejected', errorMessage: error.message})
@@ -44,18 +47,21 @@ export class App extends Component {
   }
 
   onLoadMoreClick = () => {
-    this.setState(({page}) => ({page: page + 1}))
+    this.setState(({ page }) => ({ page: page + 1 }))
   }
 
   render() {
-    const { status, images, errorMessage } = this.state
+    const { status, images, totalImages, errorMessage } = this.state
     const { handleSubmit, onLoadMoreClick } = this
+    const imagesEmpty = images.length === 0;
+    const allImagesShown = images.length >= totalImages;
       return (
       <>
         <Searchbar onSubmit={handleSubmit} />
         <div className="container">
-          {status === 'fulfilled' && <ImageGallery images={images} onButtonClick={onLoadMoreClick} />}
+          {!imagesEmpty && <ImageGallery images={images}/>}
           {status === 'pending' && <Loader />}
+          {!allImagesShown && <Button onClick={onLoadMoreClick} />}
           {status === 'rejected' && <ErrorHandler message={errorMessage} />}
         </div>
       </>

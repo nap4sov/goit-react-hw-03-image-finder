@@ -1,4 +1,3 @@
-import Button from "components/Button";
 import ImageGalleryItem from "components/ImageGalleryItem"
 import Modal from "components/Modal"
 import { Component } from "react";
@@ -7,7 +6,7 @@ import PropTypes from 'prop-types'
 class ImageGallery extends Component { 
     state = {
         isModalOpen: false,
-        modalId: null
+        modalImageUrl: ''
     }
 
     toggleModal = () => {
@@ -15,16 +14,19 @@ class ImageGallery extends Component {
     }
 
     handleGalleryItemClick = (event) => {
+        const { images } = this.props
+        
         this.toggleModal()
-        this.setState({modalId: event.currentTarget.id})
+        this.setState({
+            modalImageUrl: images.find(image => image.id === Number(event.currentTarget.id)).largeImageURL
+        })
     }
     render() {
-        const { images, onButtonClick } = this.props
-        const { isModalOpen, modalId } = this.state
+        const { images } = this.props
+        const { isModalOpen, modalImageUrl } = this.state
         const { handleGalleryItemClick, toggleModal } = this
         
         return (
-            <>
                 <ul className="ImageGallery">
                     {images.map(({ id, webformatURL }) =>
                         <ImageGalleryItem
@@ -33,10 +35,8 @@ class ImageGallery extends Component {
                             smallImg={webformatURL}
                             onClick={handleGalleryItemClick}
                         />)}
-                    {isModalOpen && <Modal images={images} onClose={toggleModal} id={modalId} />}
+                    {isModalOpen && <Modal imageUrl={modalImageUrl} onClose={toggleModal} />}
                 </ul>
-                {images.length >= 12 && <Button onClick={onButtonClick} />}
-            </>
         )
     }
 }
@@ -45,8 +45,7 @@ ImageGallery.propTypes = {
     images: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
         webformatURL: PropTypes.string.isRequired
-    })),
-    onButtonClick: PropTypes.func.isRequired
+    }))
 }
 
 export default ImageGallery
